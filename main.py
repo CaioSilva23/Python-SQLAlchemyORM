@@ -1,17 +1,15 @@
 import repositorios.cliente_repositorio as cliente_repositorio, entidades.cliente as cliente
-
-    
-cliente = cliente.Cliente("Neide",52)
-
-repositorio_cliente = cliente_repositorio.ClienteRepositorio()
-
-repositorio_cliente.listar_cliente()
-# cliente_repositorio.ClienteRepositorio.inserir_cliente(cliente)
-# cliente_repositorio.ClienteRepositorio.editar_cliente(1, cliente)
-# cliente_repositorio.ClienteRepositorio.remover_cliente(8)
+import fabricas.fabrica_conexao as fb_conexao
 
 
+fabrica = fb_conexao.FabricaConexao()
+sessao = fabrica.criar_sessao()
 
 
+nome_cliente = input("Digite o nome: ")
+idade_cliente = int(input("Digite a idade: "))
+novo_cliente = cliente.Cliente(nome_cliente, idade_cliente)
+repositorio = cliente_repositorio.ClienteRepositorio()
+repositorio.inserir_cliente(novo_cliente, sessao)
 
-
+sessao.commit()
