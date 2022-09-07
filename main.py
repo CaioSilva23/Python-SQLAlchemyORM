@@ -1,15 +1,100 @@
 import repositorios.cliente_repositorio as cliente_repositorio, entidades.cliente as cliente
 import fabricas.fabrica_conexao as fb_conexao
 
+loop = True
+while loop:
+    print(30 * "-", "MENU", 30 * "-")
+    print("1. Cliente")
+    print("2. Produtos")
+    print("3. Pedidos")
+    print("0. Sair")
+    print(67 * "-")
 
-fabrica = fb_conexao.FabricaConexao()
-sessao = fabrica.criar_sessao()
+    menu_principal = int(input("Digite a opção desejada: "))
 
+    if menu_principal == 1:
+        print(30 * "-", "MENU", 30 * "-")
+        print("1. Inserir cliente")
+        print("2. Editar cliente")
+        print("3. Remover cliente")
+        print("4. Listar clientes")
+        print("0. Sair")
+        print(67 * "-")
 
-nome_cliente = input("Digite o nome: ")
-idade_cliente = int(input("Digite a idade: "))
-novo_cliente = cliente.Cliente(nome_cliente, idade_cliente)
-repositorio = cliente_repositorio.ClienteRepositorio()
-repositorio.inserir_cliente(novo_cliente, sessao)
+        menu_cliente = int(input("Digite a opção desejada: "))
 
-sessao.commit()
+        if menu_cliente == 1:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+            try:
+                nome_cliente = input("Digite o nome: ")
+                idade_cliente = int(input("Digite a idade: "))
+
+                novo_cliente = cliente.Cliente(nome_cliente, idade_cliente)
+                repositorio = cliente_repositorio.ClienteRepositorio()
+                repositorio.inserir_cliente(novo_cliente, sessao)
+
+                sessao.commit()
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+
+        elif menu_cliente == 2:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+            try:
+                id_cliente = int(input("Digite o ID do cliente a ser atualizado: "))
+                nome_cliente = input("Digite o nome: ")
+                idade_cliente = int(input("Digite a idade: "))
+
+                novo_cliente = cliente.Cliente(nome_cliente, idade_cliente)
+                repositorio = cliente_repositorio.ClienteRepositorio()
+                repositorio.editar_cliente(id_cliente, novo_cliente, sessao)
+
+                sessao.commit()
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+        elif menu_cliente == 3:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+
+            try:
+                id_cliente = int(input("Digite o ID do cliente que deseja remover: "))
+
+                repositorio = cliente_repositorio.ClienteRepositorio()
+                repositorio.remover_cliente(id_cliente, sessao)
+                sessao.commit()
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+
+        elif menu_cliente == 4:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+            try:
+                repositorio = cliente_repositorio.ClienteRepositorio()
+                clientes = repositorio.listar_cliente(sessao)
+
+                for cliente in clientes:
+                    print(cliente)
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+
+        else:
+            continue
+
+    elif menu_principal == 0:
+        print("Até mais!")
+        break
+    else:
+        print("Opção inválida!")
