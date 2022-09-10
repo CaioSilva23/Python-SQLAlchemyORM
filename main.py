@@ -127,6 +127,7 @@ while loop:
     elif menu_principal == 2:
         print(30 * "-", "MENU", 30 * "-")
         print("1. Inserir produto")
+        print("2. Buscar produto ID")
         print("0. Sair")
         print(67 * "-")
 
@@ -147,6 +148,23 @@ while loop:
                 raise
             finally:
                 sessao.close()
+
+        elif menu_produto == 2:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+
+            try:
+                id_produto = int(input("Digite o ID do produto a ser pesquisado: "))
+                repositorio = produto_repositorio.ProdutoRepositorio()
+                produto = repositorio.listar_produto_id(id_produto, sessao)
+                print(produto)
+                sessao.commit()
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+
         elif menu_produto == 0:
             continue
         else:
@@ -163,9 +181,20 @@ while loop:
             fabrica = fb_conexao.FabricaConexao()
             sessao = fabrica.criar_sessao()
             try:
+                loop_pedido = True
+                lista_produto = []
+                while loop_pedido:
+                    print("1. Inserir produto")
+                    print("0. Voltar")
+                    menu_pedido_produto = int(input("Digite a opção desejada: "))
+                    if menu_pedido_produto == 1:
+                        id_produto_pedido = int(input("Digite o ID do produto deste pedido: "))
+                        lista_produto.append(id_produto_pedido)
+                    elif menu_pedido_produto == 0:
+                        break
                 id_cliente_pedido = int(input("Informe o ID do cliente relacionado com o pedido: "))
                 repositorio_pedido = pedido_repositorio.PedidoRepositorio()
-                pedido = repositorio_pedido.inserir_pedido(id_cliente_pedido, sessao)
+                repositorio_pedido.inserir_pedido(id_cliente_pedido, sessao, lista_produto)
                 sessao.commit()
             except:
                 sessao.rollback()
