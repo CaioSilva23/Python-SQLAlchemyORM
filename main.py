@@ -173,6 +173,7 @@ while loop:
     elif menu_principal == 3:
         print(30 * "-", "MENU", 30 * "-")
         print("1. Inserir pedido")
+        print("2. Listar pedidos")
         print("0. Sair")
         print(67 * "-")
 
@@ -201,6 +202,21 @@ while loop:
                 raise
             finally:
                 sessao.close()
+        elif menu_pedido == 2:
+            fabrica = fb_conexao.FabricaConexao()
+            sessao = fabrica.criar_sessao()
+            try:
+                repositorio_pedido = pedido_repositorio.PedidoRepositorio()
+                pedidos = repositorio_pedido.listar_pedidos(sessao)
+                for pedido in pedidos:
+                    # imprimindo os produtos de cada pedido
+                    print(pedido, pedido.produtos)
+            except:
+                sessao.rollback()
+                raise
+            finally:
+                sessao.close()
+
         elif menu_pedido == 0:
             continue
         else:
